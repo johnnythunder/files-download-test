@@ -1,11 +1,24 @@
 import styled, { createGlobalStyle } from 'styled-components';
 
 const GlobalStyle = createGlobalStyle`
+  :root {
+    --gray-10: #FAFAFA;
+    --gray-20: #F5F5F5;
+    --gray-30: #EEEEEE;
+    --gray-40: #E0E0E0;
+    --gray-50: #D6D6D6;
+    --gray-60: #BDBDBD;
+    --green:   #2ECC40;
+    --yellow:  #FFDC00;
+    --red:     #FF4136;
+  }
+
   html {
     font-size: 12px;
   }
 
   body {
+    background-color: var(--gray-10);
     margin: 0;
     font-family: 'Roboto', 'Helvetica Neue', sans-serif;
     -webkit-font-smoothing: antialiased;
