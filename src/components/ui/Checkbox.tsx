@@ -1,12 +1,14 @@
-import { ChangeEvent, ReactNode } from 'react';
+import { ChangeEvent, ReactNode, useEffect, useRef, memo } from 'react';
 import styled from 'styled-components';
 import checkboxActive from '../../icons/icon-checkbox-active.svg';
 import checkboxInactive from '../../icons/icon-checkbox-inactive.svg';
+import checkboxIndeterminate from '../../icons/icon-checkbox-indeterminate.svg';
 
 export type CheckboxProps = {
   label?: ReactNode;
   title?: string;
   checked: boolean;
+  indeterminate?: boolean;
   onChange: (checked: boolean) => void;
 };
 
@@ -37,21 +39,33 @@ const CheckboxInput = styled.input.attrs({ type: 'checkbox' })`
   &:checked {
     background-image: url(${checkboxActive});
   }
+
+  &:indeterminate {
+    background-image: url(${checkboxIndeterminate});
+  }
 `;
 
-const Checkbox = ({ label, title, checked, onChange }: CheckboxProps) => {
+const Checkbox = ({ label, title, checked, indeterminate, onChange }: CheckboxProps) => {
+  const elRef = useRef<HTMLInputElement>(null);
+
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.checked);
   };
 
+  useEffect(() => {
+    if (elRef.current) elRef.current.indeterminate = !!indeterminate;
+  }, [indeterminate]);
+
   return (
     <CheckboxLabel>
       <CheckboxContainer>
-        <CheckboxInput title={title} aria-label={title} checked={checked} onChange={handleChange} />
+        <CheckboxInput title={title} aria-label={title} checked={checked} onChange={handleChange} ref={elRef} />
       </CheckboxContainer>
       {label}
     </CheckboxLabel>
   );
 };
 
-export default Checkbox;
+Checkbox.displayName = 'Checkbox';
+
+export default memo(Checkbox);

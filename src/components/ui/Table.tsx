@@ -1,11 +1,15 @@
-import styled from 'styled-components';
+import { PropsWithChildren } from 'react';
+import styled, { css } from 'styled-components';
+
+type TRowProps = PropsWithChildren<{
+  selected?: boolean;
+  selectable?: boolean;
+}>;
 
 export const Table = styled.table`
   width: 100%;
-  background-color: white;
+  border: none;
   border-collapse: collapse;
-  border: 1px solid var(--gray-50);
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 `;
 
 export const THead = styled.thead`
@@ -19,10 +23,26 @@ export const THeader = styled.th`
 
 export const TBody = styled.tbody``;
 
-export const TRow = styled.tr`
+export const TRow = styled.tr<TRowProps>`
   &:not(:last-child) {
     border-bottom: 1px solid var(--gray-50);
   }
+
+  ${(props) =>
+    props.selected &&
+    css`
+      background-color: var(--gray-30);
+    `}
+
+  ${(props) =>
+    props.selectable &&
+    css`
+      cursor: pointer;
+
+      &:hover {
+        background-color: var(--gray-20);
+      }
+    `}
 `;
 
 export const TData = styled.td`
