@@ -1,7 +1,15 @@
-import { memo } from 'react';
-import { Table, THead, TRow, THeader, TBody, TData } from './ui';
+import { useState, memo } from 'react';
+import { Checkbox, Table, THead, TRow, THeader, TBody, TData } from './ui';
+import { titleize } from '../utils/string';
 
-const files = [
+export type FileT = {
+  name: string;
+  device: string;
+  path: string;
+  status: 'available' | 'scheduled';
+};
+
+const files: FileT[] = [
   {
     name: 'smss.exe',
     device: 'Stark',
@@ -34,6 +42,14 @@ const files = [
 ];
 
 const FilesTable = () => {
+  const [selected, setSelected] = useState<string[]>([]);
+
+  const handleChange = (checked: boolean, fileName: string) => {
+    const newSelected = checked ? [...selected, fileName] : selected.filter((f) => f !== fileName);
+
+    setSelected(newSelected);
+  };
+
   return (
     <Table>
       <THead>
@@ -48,11 +64,17 @@ const FilesTable = () => {
       <TBody>
         {files.map((file) => (
           <TRow key={file.name}>
-            <TData>[X]</TData>
+            <TData>
+              <Checkbox
+                title={file.name}
+                checked={selected.includes(file.name)}
+                onChange={(checked) => handleChange(checked, file.name)}
+              />
+            </TData>
             <TData>{file.name}</TData>
             <TData>{file.device}</TData>
             <TData>{file.path}</TData>
-            <TData>{file.status}</TData>
+            <TData>{titleize(file.status)}</TData>
           </TRow>
         ))}
       </TBody>
