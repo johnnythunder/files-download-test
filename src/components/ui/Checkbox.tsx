@@ -11,13 +11,13 @@ export type CheckboxProps = {
 };
 
 const CheckboxLabel = styled.label`
-  display: inline-flex;
+  display: flex;
   gap: 4px;
   align-items: center;
   cursor: pointer;
 `;
 
-const CheckboxReplacement = styled.span`
+const CheckboxContainer = styled.span`
   display: flex;
   height: 20px;
   width: 20px;
@@ -46,9 +46,9 @@ const Checkbox = ({ label, title, checked, onChange }: CheckboxProps) => {
 
   return (
     <CheckboxLabel>
-      <CheckboxReplacement>
+      <CheckboxContainer>
         <CheckboxInput title={title} aria-label={title} checked={checked} onChange={handleChange} />
-      </CheckboxReplacement>
+      </CheckboxContainer>
       {label}
     </CheckboxLabel>
   );

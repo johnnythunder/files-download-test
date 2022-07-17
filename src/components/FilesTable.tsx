@@ -1,48 +1,54 @@
 import { useState, memo } from 'react';
 import { Checkbox, Table, THead, TRow, THeader, TBody, TData } from './ui';
+import useGetFiles from '../hooks/useGetFiles';
 import { titleize } from '../utils/string';
+import useDownloadFiles from '../hooks/useDownloadFiles';
+import fileDownload from '../icons/icon-file-download.svg';
+import styled from 'styled-components';
 
-export type FileT = {
-  name: string;
-  device: string;
-  path: string;
-  status: 'available' | 'scheduled';
-};
+const Header = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 24px;
+  padding: 16px 0;
+  font-size: 1.4rem;
+`;
 
-const files: FileT[] = [
-  {
-    name: 'smss.exe',
-    device: 'Stark',
-    path: '\\Device\\HarddiskVolume2\\Windows\\System32\\smss.exe',
-    status: 'scheduled',
-  },
+const DownloadButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px 4px 4px;
+  font-size: inherit;
+  background: none;
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
 
-  {
-    name: 'netsh.exe',
-    device: 'Targaryen',
-    path: '\\Device\\HarddiskVolume2\\Windows\\System32\\netsh.exe',
-    status: 'available',
-  },
+  &:hover:not(:disabled) {
+    background-color: var(--gray-30);
+  }
 
-  {
-    name: 'uxtheme.dll',
-    device: 'Lannister',
-    path: '\\Device\\HarddiskVolume1\\Windows\\System32\\uxtheme.dll',
-    status: 'available',
-  },
+  &::before {
+    content: '';
+    display: block;
+    height: 24px;
+    width: 24px;
+    background: url(${fileDownload});
+    background-size: cover;
+  }
 
-  {
-    name: 'cryptbase.dll',
-    device: 'Martell',
-    path: '\\Device\\HarddiskVolume1\\Windows\\System32\\cryptbase.dll',
-    status: 'scheduled',
-  },
-
-  { name: '7za.exe', device: 'Baratheon', path: '\\Device\\HarddiskVolume1\\temp\\7za.exe', status: 'scheduled' },
-];
+  &:disabled::before {
+    opacity: 0.25;
+  }
+`;
 
 const FilesTable = () => {
   const [selected, setSelected] = useState<string[]>([]);
+
+  const files = useGetFiles();
+  const downloadFiles = useDownloadFiles();
 
   const handleChange = (checked: boolean, fileName: string) => {
     const newSelected = checked ? [...selected, fileName] : selected.filter((f) => f !== fileName);
@@ -50,35 +56,61 @@ const FilesTable = () => {
     setSelected(newSelected);
   };
 
+  const handleSelectAllChange = (checked: boolean) => {
+    const newSelected = checked ? files.map((f) => f.name) : [];
+
+    setSelected(newSelected);
+  };
+
+  const handleDownload = () => {
+    const filesToDownload = files.filter((f) => selected.includes(f.name));
+
+    downloadFiles(filesToDownload);
+  };
+
   return (
-    <Table>
-      <THead>
-        <TRow>
-          <THeader />
-          <THeader>Name</THeader>
-          <THeader>Device</THeader>
-          <THeader>Path</THeader>
-          <THeader>Status</THeader>
-        </TRow>
-      </THead>
-      <TBody>
-        {files.map((file) => (
-          <TRow key={file.name}>
-            <TData>
-              <Checkbox
-                title={file.name}
-                checked={selected.includes(file.name)}
-                onChange={(checked) => handleChange(checked, file.name)}
-              />
-            </TData>
-            <TData>{file.name}</TData>
-            <TData>{file.device}</TData>
-            <TData>{file.path}</TData>
-            <TData>{titleize(file.status)}</TData>
+    <>
+      <Header>
+        <Checkbox
+          label="Select all"
+          title="Select all files"
+          checked={selected.length === files.length}
+          onChange={handleSelectAllChange}
+        />
+
+        <DownloadButton disabled={!selected.length} onClick={handleDownload}>
+          Download Selected
+        </DownloadButton>
+      </Header>
+      <Table>
+        <THead>
+          <TRow>
+            <THeader />
+            <THeader>Name</THeader>
+            <THeader>Device</THeader>
+            <THeader>Path</THeader>
+            <THeader>Status</THeader>
           </TRow>
-        ))}
-      </TBody>
-    </Table>
+        </THead>
+        <TBody>
+          {files.map((file) => (
+            <TRow key={file.name}>
+              <TData>
+                <Checkbox
+                  title={file.name}
+                  checked={selected.includes(file.name)}
+                  onChange={(checked) => handleChange(checked, file.name)}
+                />
+              </TData>
+              <TData>{file.name}</TData>
+              <TData>{file.device}</TData>
+              <TData>{file.path}</TData>
+              <TData>{titleize(file.status)}</TData>
+            </TRow>
+          ))}
+        </TBody>
+      </Table>
+    </>
   );
 };
 
