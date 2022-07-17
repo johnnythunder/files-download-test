@@ -1,4 +1,5 @@
 import styled, { createGlobalStyle } from 'styled-components';
+import FilesTable from './components/FilesTable';
 
 const GlobalStyle = createGlobalStyle`
   :root {
@@ -42,7 +43,7 @@ const App = () => {
       <GlobalStyle />
 
       <AppContainer>
-        <p>Hello World</p>
+        <FilesTable />
       </AppContainer>
     </>
   );
