@@ -6,11 +6,6 @@ Running the app is as simple as `npm start`.
 
 Running tests can be done with `npm test`.
 
-## Todo
-
-- [ ] Select All unit test
-- [ ] Download Files integration test
-
 ## Future Improvements/Optimizations
 
 - Break `Button` into UI primitive
